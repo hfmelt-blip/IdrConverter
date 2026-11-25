@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="روبية ↔ دينار">
-<title>محوّل الروبية للدينار</title>
+<meta name="apple-mobile-web-app-title" content="محوّل العملات">
+<title>محوّل العملات للدينار</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
@@ -41,12 +41,20 @@ input:focus{outline:none;border-color:var(--g)}
 .toast{position:fixed;inset-inline:0;bottom:calc(24px + env(safe-area-inset-bottom));margin:auto;width:max-content;background:#14201c;color:#fff;padding:10px 18px;border-radius:999px;opacity:0;transition:opacity .25s;pointer-events:none}
 .toast.on{opacity:1}
 [hidden]{display:none!important}
+.cur{display:flex;gap:10px;align-items:center;margin:4px 0 16px}.cur b{flex:1;color:var(--g);font-size:20px}.cur .btn{flex:none;padding:0 16px}
+.dlg{position:fixed;inset:0;background:#0008;display:grid;place-items:center;padding:16px;z-index:9}
+.box{background:var(--card);border-radius:18px;padding:16px;width:min(520px,100%);max-height:88vh;display:flex;flex-direction:column}
+.box h2{margin:0 0 10px;font-size:20px}
+.q{font:400 16px Cairo,sans-serif;text-align:start;direction:rtl;padding:10px 12px}
+#list{list-style:none;margin:10px 0;padding:0;overflow:auto;flex:1;min-height:120px}
+#list li{padding:12px 8px;border-bottom:1px solid var(--line);cursor:pointer}#list li:hover{background:light-dark(#eef5f2,#22302b)}
+#list li small{color:var(--mute)}
 @media(prefers-reduced-motion:reduce){.toast{transition:none}}
 </style>
 </head>
 <body>
 <header>
-  <h1>محوّل الروبية الإندونيسية</h1>
+  <h1 id="title">محوّل العملات</h1>
   <div class="tabs" role="tablist">
     <button id="tC" role="tab" aria-selected="true">التحويل</button>
     <button id="tS" role="tab" aria-selected="false">أسعار الصرف</button>
@@ -55,7 +63,7 @@ input:focus{outline:none;border-color:var(--g)}
 <main>
   <section id="sC">
     <div class="card">
-      <label for="idr">السعر بالروبية الإندونيسية (IDR)</label>
+      <label for="idr" id="lblIn">السعر بالعملة الأخرى</label>
       <input id="idr" inputmode="numeric" placeholder="0" autocomplete="off">
       <div class="row"><button class="btn" id="z">000+</button><button class="btn" id="clr">مسح</button></div>
     </div>
@@ -68,55 +76,106 @@ input:focus{outline:none;border-color:var(--g)}
   </section>
   <section id="sS" hidden>
     <div class="card set">
+      <label>العملة الأخرى</label>
+      <div class="cur"><b id="curName">لم تُختر بعد</b><button class="btn" id="pick">تغيير العملة</button></div>
       <label for="r1">قيمة 100 دولار بالدينار العراقي</label>
       <input id="r1" inputmode="numeric" placeholder="مثال: 150,000" autocomplete="off">
-      <label for="r2" style="margin-top:16px">قيمة 100 دولار بالروبية الإندونيسية</label>
-      <input id="r2" inputmode="numeric" placeholder="مثال: 1,650,000" autocomplete="off">
+      <label for="r2" style="margin-top:16px" id="lblR2">قيمة 100 دولار بالعملة الأخرى</label>
+      <input id="r2" inputmode="numeric" placeholder="0" autocomplete="off">
       <div class="row"><button class="btn pri" id="save">حفظ</button></div>
     </div>
     <p class="info" id="sInfo"></p>
   </section>
 </main>
+<div class="dlg" id="dlg" hidden><div class="box">
+  <h2>اختر العملة</h2>
+  <input id="q" class="q" placeholder="ابحث باسم البلد أو العملة (مثال: بريطانيا)" autocomplete="off">
+  <ul id="list"></ul>
+  <div id="manual" hidden>
+    <input id="mName" class="q" placeholder="اسم العملة (مثال: روبية إندونيسية)">
+    <input id="mCode" class="q" placeholder="رمز العملة — اختياري (مثال: IDR)" style="margin-top:8px;direction:ltr">
+  </div>
+  <div class="row"><button class="btn" id="manBtn">إدخال يدوي</button><button class="btn pri" id="manOk" hidden>تم</button><button class="btn" id="cancel">إلغاء</button></div>
+</div></div>
 <div class="toast" id="toast"></div>
 <script>
 {
+const DATA=[["إندونيسيا", "Indonesia", "روبية إندونيسية", "IDR"], ["بريطانيا (المملكة المتحدة)", "United Kingdom Britain England", "جنيه إسترليني", "GBP"], ["الولايات المتحدة (أمريكا)", "United States USA America", "دولار أمريكي", "USD"], ["منطقة اليورو", "Eurozone Europe", "يورو", "EUR"], ["ألمانيا", "Germany", "يورو", "EUR"], ["فرنسا", "France", "يورو", "EUR"], ["إيطاليا", "Italy", "يورو", "EUR"], ["إسبانيا", "Spain", "يورو", "EUR"], ["هولندا", "Netherlands Holland", "يورو", "EUR"], ["بلجيكا", "Belgium", "يورو", "EUR"], ["النمسا", "Austria", "يورو", "EUR"], ["اليونان", "Greece", "يورو", "EUR"], ["البرتغال", "Portugal", "يورو", "EUR"], ["أيرلندا", "Ireland", "يورو", "EUR"], ["فنلندا", "Finland", "يورو", "EUR"], ["قبرص", "Cyprus", "يورو", "EUR"], ["مالطا", "Malta", "يورو", "EUR"], ["سلوفاكيا", "Slovakia", "يورو", "EUR"], ["سلوفينيا", "Slovenia", "يورو", "EUR"], ["إستونيا", "Estonia", "يورو", "EUR"], ["لاتفيا", "Latvia", "يورو", "EUR"], ["ليتوانيا", "Lithuania", "يورو", "EUR"], ["لوكسمبورغ", "Luxembourg", "يورو", "EUR"], ["كرواتيا", "Croatia", "يورو", "EUR"], ["الجبل الأسود", "Montenegro", "يورو", "EUR"], ["كوسوفو", "Kosovo", "يورو", "EUR"], ["تركيا", "Turkey Turkiye", "ليرة تركية", "TRY"], ["إيران", "Iran", "ريال إيراني", "IRR"], ["السعودية", "Saudi Arabia KSA", "ريال سعودي", "SAR"], ["الإمارات", "United Arab Emirates UAE Dubai", "درهم إماراتي", "AED"], ["الكويت", "Kuwait", "دينار كويتي", "KWD"], ["قطر", "Qatar", "ريال قطري", "QAR"], ["البحرين", "Bahrain", "دينار بحريني", "BHD"], ["عُمان", "Oman", "ريال عماني", "OMR"], ["الأردن", "Jordan", "دينار أردني", "JOD"], ["سوريا", "Syria", "ليرة سورية", "SYP"], ["لبنان", "Lebanon", "ليرة لبنانية", "LBP"], ["مصر", "Egypt", "جنيه مصري", "EGP"], ["فلسطين", "Palestine", "شيكل", "ILS"], ["اليمن", "Yemen", "ريال يمني", "YER"], ["ليبيا", "Libya", "دينار ليبي", "LYD"], ["تونس", "Tunisia", "دينار تونسي", "TND"], ["الجزائر", "Algeria", "دينار جزائري", "DZD"], ["المغرب", "Morocco", "درهم مغربي", "MAD"], ["السودان", "Sudan", "جنيه سوداني", "SDG"], ["موريتانيا", "Mauritania", "أوقية موريتانية", "MRU"], ["الصومال", "Somalia", "شلن صومالي", "SOS"], ["جيبوتي", "Djibouti", "فرنك جيبوتي", "DJF"], ["جزر القمر", "Comoros", "فرنك قمري", "KMF"], ["ماليزيا", "Malaysia", "رينغيت ماليزي", "MYR"], ["تايلاند", "Thailand", "بات تايلندي", "THB"], ["سنغافورة", "Singapore", "دولار سنغافوري", "SGD"], ["الفلبين", "Philippines", "بيزو فلبيني", "PHP"], ["فيتنام", "Vietnam", "دونغ فيتنامي", "VND"], ["كمبوديا", "Cambodia", "رييل كمبودي", "KHR"], ["لاوس", "Laos", "كيب لاوسي", "LAK"], ["ميانمار", "Myanmar Burma", "كيات ميانماري", "MMK"], ["بروناي", "Brunei", "دولار بروناي", "BND"], ["الصين", "China", "يوان صيني", "CNY"], ["هونغ كونغ", "Hong Kong", "دولار هونغ كونغ", "HKD"], ["ماكاو", "Macau", "باتاكا ماكاوية", "MOP"], ["تايوان", "Taiwan", "دولار تايواني جديد", "TWD"], ["اليابان", "Japan", "ين ياباني", "JPY"], ["كوريا الجنوبية", "South Korea", "وون كوري جنوبي", "KRW"], ["كوريا الشمالية", "North Korea", "وون كوري شمالي", "KPW"], ["منغوليا", "Mongolia", "توغروغ منغولي", "MNT"], ["الهند", "India", "روبية هندية", "INR"], ["باكستان", "Pakistan", "روبية باكستانية", "PKR"], ["بنغلاديش", "Bangladesh", "تاكا بنغلاديشية", "BDT"], ["سريلانكا", "Sri Lanka", "روبية سريلانكية", "LKR"], ["نيبال", "Nepal", "روبية نيبالية", "NPR"], ["بوتان", "Bhutan", "نغولترم بوتاني", "BTN"], ["المالديف", "Maldives", "روفيه مالديفية", "MVR"], ["أفغانستان", "Afghanistan", "أفغاني", "AFN"], ["أذربيجان", "Azerbaijan", "مانات أذربيجاني", "AZN"], ["جورجيا", "Georgia", "لاري جورجي", "GEL"], ["أرمينيا", "Armenia", "درام أرميني", "AMD"], ["كازاخستان", "Kazakhstan", "تينغ كازاخستاني", "KZT"], ["أوزبكستان", "Uzbekistan", "سوم أوزبكي", "UZS"], ["تركمانستان", "Turkmenistan", "مانات تركمانستاني", "TMT"], ["قيرغيزستان", "Kyrgyzstan", "سوم قيرغيزي", "KGS"], ["طاجيكستان", "Tajikistan", "سوموني طاجيكي", "TJS"], ["روسيا", "Russia", "روبل روسي", "RUB"], ["أوكرانيا", "Ukraine", "هريفنيا أوكرانية", "UAH"], ["بيلاروسيا", "Belarus", "روبل بيلاروسي", "BYN"], ["مولدوفا", "Moldova", "ليو مولدوفي", "MDL"], ["رومانيا", "Romania", "ليو روماني", "RON"], ["بلغاريا", "Bulgaria", "ليف بلغاري", "BGN"], ["بولندا", "Poland", "زلوتي بولندي", "PLN"], ["التشيك", "Czech Republic Czechia", "كرونة تشيكية", "CZK"], ["المجر", "Hungary", "فورنت مجري", "HUF"], ["صربيا", "Serbia", "دينار صربي", "RSD"], ["البوسنة والهرسك", "Bosnia and Herzegovina", "مارك بوسني", "BAM"], ["مقدونيا الشمالية", "North Macedonia", "دينار مقدوني", "MKD"], ["ألبانيا", "Albania", "ليك ألباني", "ALL"], ["سويسرا", "Switzerland", "فرنك سويسري", "CHF"], ["ليختنشتاين", "Liechtenstein", "فرنك سويسري", "CHF"], ["السويد", "Sweden", "كرونة سويدية", "SEK"], ["النرويج", "Norway", "كرونة نرويجية", "NOK"], ["الدنمارك", "Denmark", "كرونة دنماركية", "DKK"], ["آيسلندا", "Iceland", "كرونة آيسلندية", "ISK"], ["كندا", "Canada", "دولار كندي", "CAD"], ["المكسيك", "Mexico", "بيزو مكسيكي", "MXN"], ["البرازيل", "Brazil", "ريال برازيلي", "BRL"], ["الأرجنتين", "Argentina", "بيزو أرجنتيني", "ARS"], ["تشيلي", "Chile", "بيزو تشيلي", "CLP"], ["كولومبيا", "Colombia", "بيزو كولومبي", "COP"], ["بيرو", "Peru", "سول بيروفي", "PEN"], ["فنزويلا", "Venezuela", "بوليفار فنزويلي", "VES"], ["الإكوادور", "Ecuador", "دولار أمريكي", "USD"], ["بوليفيا", "Bolivia", "بوليفيانو بوليفي", "BOB"], ["باراغواي", "Paraguay", "غواراني باراغوايي", "PYG"], ["الأوروغواي", "Uruguay", "بيزو أوروغوايي", "UYU"], ["كوبا", "Cuba", "بيزو كوبي", "CUP"], ["جمهورية الدومينيكان", "Dominican Republic", "بيزو دومينيكاني", "DOP"], ["جامايكا", "Jamaica", "دولار جامايكي", "JMD"], ["غواتيمالا", "Guatemala", "كتزال غواتيمالي", "GTQ"], ["هندوراس", "Honduras", "لمبيرة هندوراسية", "HNL"], ["نيكاراغوا", "Nicaragua", "كوردوبا نيكاراغوية", "NIO"], ["كوستاريكا", "Costa Rica", "كولون كوستاريكي", "CRC"], ["بنما", "Panama", "بالبوا بنمي", "PAB"], ["أستراليا", "Australia", "دولار أسترالي", "AUD"], ["نيوزيلندا", "New Zealand", "دولار نيوزيلندي", "NZD"], ["فيجي", "Fiji", "دولار فيجي", "FJD"], ["بابوا غينيا الجديدة", "Papua New Guinea", "كينا بابوا غينيا الجديدة", "PGK"], ["جنوب أفريقيا", "South Africa", "راند جنوب أفريقي", "ZAR"], ["نيجيريا", "Nigeria", "نايرا نيجيرية", "NGN"], ["كينيا", "Kenya", "شلن كيني", "KES"], ["إثيوبيا", "Ethiopia", "بير إثيوبي", "ETB"], ["تنزانيا", "Tanzania", "شلن تنزاني", "TZS"], ["أوغندا", "Uganda", "شلن أوغندي", "UGX"], ["رواندا", "Rwanda", "فرنك رواندي", "RWF"], ["غانا", "Ghana", "سيدي غاني", "GHS"], ["السنغال", "Senegal", "فرنك غرب أفريقي", "XOF"], ["ساحل العاج", "Ivory Coast Cote d'Ivoire", "فرنك غرب أفريقي", "XOF"], ["مالي", "Mali", "فرنك غرب أفريقي", "XOF"], ["النيجر", "Niger", "فرنك غرب أفريقي", "XOF"], ["تشاد", "Chad", "فرنك وسط أفريقي", "XAF"], ["الكاميرون", "Cameroon", "فرنك وسط أفريقي", "XAF"], ["الكونغو الديمقراطية", "DR Congo", "فرنك كونغولي", "CDF"], ["أنغولا", "Angola", "كوانزا أنغولية", "AOA"], ["زامبيا", "Zambia", "كواشا زامبية", "ZMW"], ["زيمبابوي", "Zimbabwe", "دولار زيمبابوي", "ZWG"], ["موزمبيق", "Mozambique", "متكال موزمبيقي", "MZN"], ["مدغشقر", "Madagascar", "أرياري مدغشقري", "MGA"], ["موريشيوس", "Mauritius", "روبية موريشيوسية", "MUR"], ["سيشل", "Seychelles", "روبية سيشلية", "SCR"], ["ناميبيا", "Namibia", "دولار ناميبي", "NAD"], ["بوتسوانا", "Botswana", "بولا بوتسوانية", "BWP"], ["إريتريا", "Eritrea", "ناكفا إريترية", "ERN"], ["جنوب السودان", "South Sudan", "جنيه جنوب سوداني", "SSP"]];
 const $=id=>document.getElementById(id);
 const fmt=n=>Math.round(n).toLocaleString('en-US');
-const digits=s=>s.replace(/[٠-٩]/g,c=>c.charCodeAt(0)-0x660).replace(/[۰-۹]/g,c=>c.charCodeAt(0)-0x6F0).replace(/\D/g,'').replace(/^0+/,'');
+const fmt2=n=>n>=100?fmt(n):n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const digits=s=>s.replace(/[\u0660-\u0669]/g,c=>c.charCodeAt(0)-0x660).replace(/[\u06F0-\u06F9]/g,c=>c.charCodeAt(0)-0x6F0).replace(/\D/g,'').replace(/^0+/,'');
+const norm=s=>s.toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[ـ()]/g,' ').replace(/\s+/g,' ').trim();
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-let r={iqd:+store.get('iqd100')||0,idr:+store.get('idr100')||0,at:store.get('savedAt')};
+const entries=DATA.map(([c,en,cur,code])=>({c,en,cur,code,s:norm(c+' '+en+' '+cur+' '+code)}));
+let cur={name:store.get('curName')||'',code:store.get('curCode')||''};
+// migrate v1
+if(!cur.name&&+store.get('idr100')){cur={name:'روبية إندونيسية',code:'IDR'};store.set('curName',cur.name);store.set('curCode','IDR');store.set('rate_IDR',store.get('idr100'))}
+const key=()=>'rate_'+(cur.code||cur.name);
+const iqd100=()=>+store.get('iqd100')||0;
+const oth100=()=>cur.name?(+store.get(key())||0):0;
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1600)}
 function grouping(el,cb){el.addEventListener('input',()=>{const d=digits(el.value).slice(0,15);el.value=d?Number(d).toLocaleString('en-US'):'';cb&&cb()})}
+function labels(){
+  const n=cur.name||'العملة الأخرى',cp=cur.code&&cur.code!==cur.name?' ('+cur.code+')':'';
+  $('title').textContent=cur.name?'محوّل '+n+' ← دينار':'محوّل العملات';
+  $('curName').textContent=cur.name?n+cp:'لم تُختر بعد';
+  $('lblIn').textContent='السعر بـ'+n+cp;$('lblR2').textContent='قيمة 100 دولار بـ'+n;
+}
 function calc(){
-  if(!r.iqd||!r.idr){$('iqd').textContent='—';$('usd').textContent='أدخل أسعار الصرف أولاً';return}
+  const a=iqd100(),b=oth100();
+  if(!a||!b){$('iqd').textContent='—';$('usd').textContent='أدخل أسعار الصرف أولاً';return}
   const v=Number(digits($('idr').value))||0;
-  $('iqd').textContent=fmt(v*r.iqd/r.idr)+' د.ع';
-  $('usd').textContent='≈ '+(v*100/r.idr).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' $';
+  $('iqd').textContent=fmt(v*a/b)+' د.ع';
+  $('usd').textContent='≈ '+(v*100/b).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' $';
 }
 function info(){
-  $('info').innerText=(!r.iqd||!r.idr)?'لا توجد أسعار محفوظة — افتح «أسعار الصرف».':
-   `100$ = ${fmt(r.iqd)} د.ع  |  100$ = ${fmt(r.idr)} روبية\n10,000 روبية ≈ ${fmt(10000*r.iqd/r.idr)} د.ع\n1,000 د.ع ≈ ${fmt(1000*r.idr/r.iqd)} روبية`;
-  $('sInfo').innerText=r.at?`آخر تحديث للأسعار: ${r.at}\nتگدر تعدّلها بأي وقت.`:'أدخل سعر الـ 100 دولار بالعملتين حسب سعر الصرّاف، واضغط حفظ.';
+  const a=iqd100(),b=oth100(),n=cur.name,at=store.get('savedAt');
+  if(!a||!b)$('info').innerText='لا توجد أسعار محفوظة لهذه العملة — افتح «أسعار الصرف».';
+  else{const u=b/100>=1000?10000:b/100>=10?100:1;
+    $('info').innerText=`100$ = ${fmt(a)} د.ع  |  100$ = ${fmt(b)} ${n}\n${fmt(u)} ${n} ≈ ${fmt(u*a/b)} د.ع\n1,000 د.ع ≈ ${fmt2(1000*b/a)} ${n}`}
+  $('sInfo').innerText=!cur.name?'اختر العملة أولاً من زر «تغيير العملة».':at?`آخر تحديث للأسعار: ${at}\nتگدر تعدّلها بأي وقت، وكل عملة يُحفظ سعرها لوحدها.`:'أدخل سعر الـ 100 دولار بالعملتين حسب سعر الصرّاف، واضغط حفظ.';
 }
 function show(tab){
   const c=tab==='c';$('sC').hidden=!c;$('sS').hidden=c;
   $('tC').setAttribute('aria-selected',c);$('tS').setAttribute('aria-selected',!c);
-  if(!c){$('r1').value=r.iqd?fmt(r.iqd):'';$('r2').value=r.idr?fmt(r.idr):''}
-  info();calc();
+  if(!c){$('r1').value=iqd100()?fmt(iqd100()):'';$('r2').value=oth100()?fmt(oth100()):''}
+  labels();info();calc();
 }
+let shown=entries;
+function renderList(){
+  const q=norm($('q').value);
+  shown=q?entries.filter(e=>q.split(' ').every(w=>e.s.includes(w))):entries;
+  $('list').innerHTML=shown.map((e,i)=>`<li data-i="${i}">${esc(e.c)} — <b>${esc(e.cur)}</b> <small>(${esc(e.code)})</small></li>`).join('')||'<li>لا توجد نتائج — جرّب «إدخال يدوي»</li>';
+}
+function openPicker(){$('dlg').hidden=false;$('manual').hidden=true;$('manOk').hidden=true;$('list').hidden=false;$('q').hidden=false;$('manBtn').hidden=false;$('q').value='';renderList();$('q').focus()}
+function closePicker(){$('dlg').hidden=true}
+function setCur(name,code){
+  cur={name,code};store.set('curName',name);store.set('curCode',code);
+  closePicker();$('idr').value='';
+  show(oth100()&&iqd100()?'c':'s');if(!oth100())$('r2').focus();
+}
+$('q').addEventListener('input',renderList);
+$('list').onclick=e=>{const li=e.target.closest('li[data-i]');if(li){const x=shown[+li.dataset.i];setCur(x.cur,x.code)}};
+$('pick').onclick=openPicker;$('cancel').onclick=closePicker;
+$('dlg').onclick=e=>{if(e.target.id==='dlg')closePicker()};
+$('manBtn').onclick=()=>{$('list').hidden=true;$('q').hidden=true;$('manual').hidden=false;$('manBtn').hidden=true;$('manOk').hidden=false;$('mName').value='';$('mCode').value='';$('mName').focus()};
+$('manOk').onclick=()=>{const n=$('mName').value.trim();if(!n){toast('اكتب اسم العملة');return}setCur(n,$('mCode').value.trim().toUpperCase())};
 grouping($('idr'),calc);grouping($('r1'));grouping($('r2'));
 $('tC').onclick=()=>show('c');$('tS').onclick=()=>show('s');
 $('z').onclick=()=>{const d=digits($('idr').value);if(d&&d.length<=12){$('idr').value=Number(d+'000').toLocaleString('en-US');calc()}};
 $('clr').onclick=()=>{$('idr').value='';calc();$('idr').focus()};
 $('save').onclick=()=>{
+  if(!cur.name){toast('اختر العملة أولاً');openPicker();return}
   const a=Number(digits($('r1').value)),b=Number(digits($('r2').value));
   if(!a||!b){toast('أدخل القيمتين بشكل صحيح');return}
   const d=new Date(),p=n=>String(n).padStart(2,'0');
-  r={iqd:a,idr:b,at:`${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())}  ${p(d.getHours())}:${p(d.getMinutes())}`};
-  store.set('iqd100',a);store.set('idr100',b);store.set('savedAt',r.at);
+  store.set('iqd100',a);store.set(key(),b);store.set('savedAt',`${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())}  ${p(d.getHours())}:${p(d.getMinutes())}`);
   document.activeElement.blur();toast('تم الحفظ ✓');show('c');
 };
-show(r.iqd&&r.idr?'c':'s');
+show(cur.name&&iqd100()&&oth100()?'c':'s');
+if(!cur.name)openPicker();
 }
 </script>
 </body>
