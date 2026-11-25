@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="روبية ↔ دينار">
+<title>محوّل الروبية للدينار</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: practical travel tool, calm and quick
+   IDEA: a money-changer's receipt slip
+   PICTURE: the live result, large, on a deep green banknote band
+   COLOUR and TYPE: banknote green, white, a gold accent; Cairo
+   LAYOUT: tabs, one calm column, result under input */
+:root{color-scheme:light dark;--bg:light-dark(#f2f5f4,#0f1513);--card:light-dark(#fff,#18211e);--ink:light-dark(#14201c,#e9f1ee);--mute:light-dark(#5b6b66,#9fb2ab);--line:light-dark(#dbe4e1,#2a3833);--g:#0e7c66;--g2:#0a5e4e;--gold:#ffd24d}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Cairo,system-ui,sans-serif;overflow-x:clip}
+header{background:var(--g);color:#fff;padding:calc(18px + env(safe-area-inset-top)) max(5vw,16px) 14px}
+h1{margin:0 0 12px;font-size:26px;line-height:1.1;font-weight:800}
+.tabs{display:flex;gap:8px;max-width:560px}
+.tabs button{flex:1;min-height:46px;border:0;border-radius:12px;font:600 16px Cairo,sans-serif;background:var(--g2);color:#fff;cursor:pointer}
+.tabs button[aria-selected=true]{background:#fff;color:var(--g)}
+main{padding:16px max(5vw,16px) calc(24px + env(safe-area-inset-bottom));max-width:592px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+label{display:block;font-weight:600;margin-bottom:6px}
+input{width:100%;font:800 30px Cairo,sans-serif;text-align:center;direction:ltr;padding:10px;border:2px solid var(--line);border-radius:12px;background:transparent;color:var(--ink)}
+input:focus{outline:none;border-color:var(--g)}
+.set input{font-size:24px}
+.row{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;min-height:48px;border:0;border-radius:12px;font:600 18px Cairo,sans-serif;background:light-dark(#e3ece9,#24312d);color:var(--ink);cursor:pointer}
+.btn.pri{background:var(--g);color:#fff}
+.btn:focus-visible,.tabs button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.res{background:var(--g);color:#fff;border-radius:18px;padding:20px;text-align:center;margin-bottom:14px}
+.res small{color:#d8f0ea;font-size:15px}
+.big{font-size:clamp(32px,10vw,48px);font-weight:800;line-height:1.15;white-space:nowrap;direction:ltr}
+.usd{color:var(--gold);font-size:18px;direction:ltr}
+.info{color:var(--mute);text-align:center;font-size:14px;line-height:1.9}
+.toast{position:fixed;inset-inline:0;bottom:calc(24px + env(safe-area-inset-bottom));margin:auto;width:max-content;background:#14201c;color:#fff;padding:10px 18px;border-radius:999px;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.on{opacity:1}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>محوّل الروبية الإندونيسية</h1>
+  <div class="tabs" role="tablist">
+    <button id="tC" role="tab" aria-selected="true">التحويل</button>
+    <button id="tS" role="tab" aria-selected="false">أسعار الصرف</button>
+  </div>
+</header>
+<main>
+  <section id="sC">
+    <div class="card">
+      <label for="idr">السعر بالروبية الإندونيسية (IDR)</label>
+      <input id="idr" inputmode="numeric" placeholder="0" autocomplete="off">
+      <div class="row"><button class="btn" id="z">000+</button><button class="btn" id="clr">مسح</button></div>
+    </div>
+    <div class="res">
+      <small>القيمة بالدينار العراقي</small>
+      <div class="big" id="iqd">0 د.ع</div>
+      <div class="usd" id="usd">≈ 0 $</div>
+    </div>
+    <p class="info" id="info"></p>
+  </section>
+  <section id="sS" hidden>
+    <div class="card set">
+      <label for="r1">قيمة 100 دولار بالدينار العراقي</label>
+      <input id="r1" inputmode="numeric" placeholder="مثال: 150,000" autocomplete="off">
+      <label for="r2" style="margin-top:16px">قيمة 100 دولار بالروبية الإندونيسية</label>
+      <input id="r2" inputmode="numeric" placeholder="مثال: 1,650,000" autocomplete="off">
+      <div class="row"><button class="btn pri" id="save">حفظ</button></div>
+    </div>
+    <p class="info" id="sInfo"></p>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+{
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const digits=s=>s.replace(/[٠-٩]/g,c=>c.charCodeAt(0)-0x660).replace(/[۰-۹]/g,c=>c.charCodeAt(0)-0x6F0).replace(/\D/g,'').replace(/^0+/,'');
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let r={iqd:+store.get('iqd100')||0,idr:+store.get('idr100')||0,at:store.get('savedAt')};
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1600)}
+function grouping(el,cb){el.addEventListener('input',()=>{const d=digits(el.value).slice(0,15);el.value=d?Number(d).toLocaleString('en-US'):'';cb&&cb()})}
+function calc(){
+  if(!r.iqd||!r.idr){$('iqd').textContent='—';$('usd').textContent='أدخل أسعار الصرف أولاً';return}
+  const v=Number(digits($('idr').value))||0;
+  $('iqd').textContent=fmt(v*r.iqd/r.idr)+' د.ع';
+  $('usd').textContent='≈ '+(v*100/r.idr).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' $';
+}
+function info(){
+  $('info').innerText=(!r.iqd||!r.idr)?'لا توجد أسعار محفوظة — افتح «أسعار الصرف».':
+   `100$ = ${fmt(r.iqd)} د.ع  |  100$ = ${fmt(r.idr)} روبية\n10,000 روبية ≈ ${fmt(10000*r.iqd/r.idr)} د.ع\n1,000 د.ع ≈ ${fmt(1000*r.idr/r.iqd)} روبية`;
+  $('sInfo').innerText=r.at?`آخر تحديث للأسعار: ${r.at}\nتگدر تعدّلها بأي وقت.`:'أدخل سعر الـ 100 دولار بالعملتين حسب سعر الصرّاف، واضغط حفظ.';
+}
+function show(tab){
+  const c=tab==='c';$('sC').hidden=!c;$('sS').hidden=c;
+  $('tC').setAttribute('aria-selected',c);$('tS').setAttribute('aria-selected',!c);
+  if(!c){$('r1').value=r.iqd?fmt(r.iqd):'';$('r2').value=r.idr?fmt(r.idr):''}
+  info();calc();
+}
+grouping($('idr'),calc);grouping($('r1'));grouping($('r2'));
+$('tC').onclick=()=>show('c');$('tS').onclick=()=>show('s');
+$('z').onclick=()=>{const d=digits($('idr').value);if(d&&d.length<=12){$('idr').value=Number(d+'000').toLocaleString('en-US');calc()}};
+$('clr').onclick=()=>{$('idr').value='';calc();$('idr').focus()};
+$('save').onclick=()=>{
+  const a=Number(digits($('r1').value)),b=Number(digits($('r2').value));
+  if(!a||!b){toast('أدخل القيمتين بشكل صحيح');return}
+  const d=new Date(),p=n=>String(n).padStart(2,'0');
+  r={iqd:a,idr:b,at:`${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())}  ${p(d.getHours())}:${p(d.getMinutes())}`};
+  store.set('iqd100',a);store.set('idr100',b);store.set('savedAt',r.at);
+  document.activeElement.blur();toast('تم الحفظ ✓');show('c');
+};
+show(r.iqd&&r.idr?'c':'s');
+}
+</script>
+</body>
+</html>
