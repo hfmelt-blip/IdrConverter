@@ -17,9 +17,10 @@
         android:paddingBottom="12dp">
 
         <TextView
+            android:id="@+id/appTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="محوّل الروبية الإندونيسية"
+            android:text="محوّل العملات"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -68,9 +69,10 @@
                 android:padding="16dp">
 
                 <TextView
+                    android:id="@+id/labelInput"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="السعر بالروبية الإندونيسية (IDR)"
+                    android:text="السعر بالعملة الأخرى"
                     android:textColor="#333333"
                     android:textSize="16sp" />
 
@@ -183,6 +185,39 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="العملة الأخرى"
+                    android:textColor="#333333"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="18dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/currencyName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="لم تُختر"
+                        android:textColor="#0E7C66"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btnChooseCurrency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="تغيير العملة"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="قيمة 100 دولار بالدينار العراقي"
                     android:textColor="#333333"
                     android:textSize="16sp" />
@@ -199,10 +234,11 @@
                     android:textSize="26sp" />
 
                 <TextView
+                    android:id="@+id/labelRate2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
-                    android:text="قيمة 100 دولار بالروبية الإندونيسية"
+                    android:text="قيمة 100 دولار بالعملة الأخرى"
                     android:textColor="#333333"
                     android:textSize="16sp" />
 
@@ -211,7 +247,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:hint="مثال: 1,650,000"
+                    android:hint="0"
                     android:inputType="number"
                     android:maxLength="19"
                     android:textDirection="ltr"

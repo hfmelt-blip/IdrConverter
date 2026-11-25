@@ -1,0 +1,151 @@
+إندونيسيا|Indonesia|روبية إندونيسية|IDR
+بريطانيا (المملكة المتحدة)|United Kingdom Britain England|جنيه إسترليني|GBP
+الولايات المتحدة (أمريكا)|United States USA America|دولار أمريكي|USD
+منطقة اليورو|Eurozone Europe|يورو|EUR
+ألمانيا|Germany|يورو|EUR
+فرنسا|France|يورو|EUR
+إيطاليا|Italy|يورو|EUR
+إسبانيا|Spain|يورو|EUR
+هولندا|Netherlands Holland|يورو|EUR
+بلجيكا|Belgium|يورو|EUR
+النمسا|Austria|يورو|EUR
+اليونان|Greece|يورو|EUR
+البرتغال|Portugal|يورو|EUR
+أيرلندا|Ireland|يورو|EUR
+فنلندا|Finland|يورو|EUR
+قبرص|Cyprus|يورو|EUR
+مالطا|Malta|يورو|EUR
+سلوفاكيا|Slovakia|يورو|EUR
+سلوفينيا|Slovenia|يورو|EUR
+إستونيا|Estonia|يورو|EUR
+لاتفيا|Latvia|يورو|EUR
+ليتوانيا|Lithuania|يورو|EUR
+لوكسمبورغ|Luxembourg|يورو|EUR
+كرواتيا|Croatia|يورو|EUR
+الجبل الأسود|Montenegro|يورو|EUR
+كوسوفو|Kosovo|يورو|EUR
+تركيا|Turkey Turkiye|ليرة تركية|TRY
+إيران|Iran|ريال إيراني|IRR
+السعودية|Saudi Arabia KSA|ريال سعودي|SAR
+الإمارات|United Arab Emirates UAE Dubai|درهم إماراتي|AED
+الكويت|Kuwait|دينار كويتي|KWD
+قطر|Qatar|ريال قطري|QAR
+البحرين|Bahrain|دينار بحريني|BHD
+عُمان|Oman|ريال عماني|OMR
+الأردن|Jordan|دينار أردني|JOD
+سوريا|Syria|ليرة سورية|SYP
+لبنان|Lebanon|ليرة لبنانية|LBP
+مصر|Egypt|جنيه مصري|EGP
+فلسطين|Palestine|شيكل|ILS
+اليمن|Yemen|ريال يمني|YER
+ليبيا|Libya|دينار ليبي|LYD
+تونس|Tunisia|دينار تونسي|TND
+الجزائر|Algeria|دينار جزائري|DZD
+المغرب|Morocco|درهم مغربي|MAD
+السودان|Sudan|جنيه سوداني|SDG
+موريتانيا|Mauritania|أوقية موريتانية|MRU
+الصومال|Somalia|شلن صومالي|SOS
+جيبوتي|Djibouti|فرنك جيبوتي|DJF
+جزر القمر|Comoros|فرنك قمري|KMF
+ماليزيا|Malaysia|رينغيت ماليزي|MYR
+تايلاند|Thailand|بات تايلندي|THB
+سنغافورة|Singapore|دولار سنغافوري|SGD
+الفلبين|Philippines|بيزو فلبيني|PHP
+فيتنام|Vietnam|دونغ فيتنامي|VND
+كمبوديا|Cambodia|رييل كمبودي|KHR
+لاوس|Laos|كيب لاوسي|LAK
+ميانمار|Myanmar Burma|كيات ميانماري|MMK
+بروناي|Brunei|دولار بروناي|BND
+الصين|China|يوان صيني|CNY
+هونغ كونغ|Hong Kong|دولار هونغ كونغ|HKD
+ماكاو|Macau|باتاكا ماكاوية|MOP
+تايوان|Taiwan|دولار تايواني جديد|TWD
+اليابان|Japan|ين ياباني|JPY
+كوريا الجنوبية|South Korea|وون كوري جنوبي|KRW
+كوريا الشمالية|North Korea|وون كوري شمالي|KPW
+منغوليا|Mongolia|توغروغ منغولي|MNT
+الهند|India|روبية هندية|INR
+باكستان|Pakistan|روبية باكستانية|PKR
+بنغلاديش|Bangladesh|تاكا بنغلاديشية|BDT
+سريلانكا|Sri Lanka|روبية سريلانكية|LKR
+نيبال|Nepal|روبية نيبالية|NPR
+بوتان|Bhutan|نغولترم بوتاني|BTN
+المالديف|Maldives|روفيه مالديفية|MVR
+أفغانستان|Afghanistan|أفغاني|AFN
+أذربيجان|Azerbaijan|مانات أذربيجاني|AZN
+جورجيا|Georgia|لاري جورجي|GEL
+أرمينيا|Armenia|درام أرميني|AMD
+كازاخستان|Kazakhstan|تينغ كازاخستاني|KZT
+أوزبكستان|Uzbekistan|سوم أوزبكي|UZS
+تركمانستان|Turkmenistan|مانات تركمانستاني|TMT
+قيرغيزستان|Kyrgyzstan|سوم قيرغيزي|KGS
+طاجيكستان|Tajikistan|سوموني طاجيكي|TJS
+روسيا|Russia|روبل روسي|RUB
+أوكرانيا|Ukraine|هريفنيا أوكرانية|UAH
+بيلاروسيا|Belarus|روبل بيلاروسي|BYN
+مولدوفا|Moldova|ليو مولدوفي|MDL
+رومانيا|Romania|ليو روماني|RON
+بلغاريا|Bulgaria|ليف بلغاري|BGN
+بولندا|Poland|زلوتي بولندي|PLN
+التشيك|Czech Republic Czechia|كرونة تشيكية|CZK
+المجر|Hungary|فورنت مجري|HUF
+صربيا|Serbia|دينار صربي|RSD
+البوسنة والهرسك|Bosnia and Herzegovina|مارك بوسني|BAM
+مقدونيا الشمالية|North Macedonia|دينار مقدوني|MKD
+ألبانيا|Albania|ليك ألباني|ALL
+سويسرا|Switzerland|فرنك سويسري|CHF
+ليختنشتاين|Liechtenstein|فرنك سويسري|CHF
+السويد|Sweden|كرونة سويدية|SEK
+النرويج|Norway|كرونة نرويجية|NOK
+الدنمارك|Denmark|كرونة دنماركية|DKK
+آيسلندا|Iceland|كرونة آيسلندية|ISK
+كندا|Canada|دولار كندي|CAD
+المكسيك|Mexico|بيزو مكسيكي|MXN
+البرازيل|Brazil|ريال برازيلي|BRL
+الأرجنتين|Argentina|بيزو أرجنتيني|ARS
+تشيلي|Chile|بيزو تشيلي|CLP
+كولومبيا|Colombia|بيزو كولومبي|COP
+بيرو|Peru|سول بيروفي|PEN
+فنزويلا|Venezuela|بوليفار فنزويلي|VES
+الإكوادور|Ecuador|دولار أمريكي|USD
+بوليفيا|Bolivia|بوليفيانو بوليفي|BOB
+باراغواي|Paraguay|غواراني باراغوايي|PYG
+الأوروغواي|Uruguay|بيزو أوروغوايي|UYU
+كوبا|Cuba|بيزو كوبي|CUP
+جمهورية الدومينيكان|Dominican Republic|بيزو دومينيكاني|DOP
+جامايكا|Jamaica|دولار جامايكي|JMD
+غواتيمالا|Guatemala|كتزال غواتيمالي|GTQ
+هندوراس|Honduras|لمبيرة هندوراسية|HNL
+نيكاراغوا|Nicaragua|كوردوبا نيكاراغوية|NIO
+كوستاريكا|Costa Rica|كولون كوستاريكي|CRC
+بنما|Panama|بالبوا بنمي|PAB
+أستراليا|Australia|دولار أسترالي|AUD
+نيوزيلندا|New Zealand|دولار نيوزيلندي|NZD
+فيجي|Fiji|دولار فيجي|FJD
+بابوا غينيا الجديدة|Papua New Guinea|كينا بابوا غينيا الجديدة|PGK
+جنوب أفريقيا|South Africa|راند جنوب أفريقي|ZAR
+نيجيريا|Nigeria|نايرا نيجيرية|NGN
+كينيا|Kenya|شلن كيني|KES
+إثيوبيا|Ethiopia|بير إثيوبي|ETB
+تنزانيا|Tanzania|شلن تنزاني|TZS
+أوغندا|Uganda|شلن أوغندي|UGX
+رواندا|Rwanda|فرنك رواندي|RWF
+غانا|Ghana|سيدي غاني|GHS
+السنغال|Senegal|فرنك غرب أفريقي|XOF
+ساحل العاج|Ivory Coast Cote d'Ivoire|فرنك غرب أفريقي|XOF
+مالي|Mali|فرنك غرب أفريقي|XOF
+النيجر|Niger|فرنك غرب أفريقي|XOF
+تشاد|Chad|فرنك وسط أفريقي|XAF
+الكاميرون|Cameroon|فرنك وسط أفريقي|XAF
+الكونغو الديمقراطية|DR Congo|فرنك كونغولي|CDF
+أنغولا|Angola|كوانزا أنغولية|AOA
+زامبيا|Zambia|كواشا زامبية|ZMW
+زيمبابوي|Zimbabwe|دولار زيمبابوي|ZWG
+موزمبيق|Mozambique|متكال موزمبيقي|MZN
+مدغشقر|Madagascar|أرياري مدغشقري|MGA
+موريشيوس|Mauritius|روبية موريشيوسية|MUR
+سيشل|Seychelles|روبية سيشلية|SCR
+ناميبيا|Namibia|دولار ناميبي|NAD
+بوتسوانا|Botswana|بولا بوتسوانية|BWP
+إريتريا|Eritrea|ناكفا إريترية|ERN
+جنوب السودان|South Sudan|جنيه جنوب سوداني|SSP
